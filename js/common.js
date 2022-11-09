@@ -475,16 +475,18 @@ var bubbles = {
 				})
 			}
 
-			bubblesWrapper.addEventListener("mousemove", function(e) {
-				gsap.to(bubblesWrapper.querySelectorAll(".bubbles__item"), 
-					{
-						duration:3, 
-						x:function(i){return (e.clientX/window.innerWidth)/(i+1)*150}, 
-						y:function(i){return i*-20*(e.clientY/window.innerHeight)}, 
-						rotation: "random(-10, 10)",
-						overwrite:'auto'
-					});
-			});
+			if(window.innerWidth >= 992) {				
+				bubblesWrapper.addEventListener("mousemove", function(e) {				
+					gsap.to(bubblesWrapper.querySelectorAll(".bubbles__item"), 
+						{
+							duration:3, 
+							x:function(i){return (e.clientX/window.innerWidth)/(i+1)*150}, 
+							y:function(i){return i*-20*(e.clientY/window.innerHeight)}, 
+							rotation: "random(-10, 10)",
+							overwrite:'auto'
+						});
+				});
+			}
 		}
 	},
 	click: function(bubble) {

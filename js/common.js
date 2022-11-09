@@ -762,6 +762,7 @@ function textPreLoader() {
 		headerToTopInVH = 15,
 		distansHeaderToTop,		
 		headerMain = document.querySelector(".headerMain");
+		headerMainH = headerMain.clientHeight;
 
 	let resetScroll = (h) => {
 		let i = h || 0;
@@ -812,7 +813,11 @@ function textPreLoader() {
 			});			
 
 			tl.to(obj, {scale:1, opacity: 1}, "+=" + hold);
-			tl.to(obj, {"top": distansHeaderToTop+3}, "+=" + hold);
+			tl.to(obj, {
+				"top": () => {
+					return (distansHeaderToTop + ((headerMainH - obj.clientHeight) / 2))
+				}
+			}, "+=" + hold);
 			tl.to(obj, {scale: 1.15, opacity: 0}, "+=" + hold);	  
 		});
 

@@ -306,7 +306,7 @@ var initSlick = {
 
 		if(isGallerySlick) {
 			if (typeof $.fn.slick == "undefined") {
-	        	loadJS("js/slick1.8.1.min.js", initSlick.start, document.body);
+	        	loadJS("js/slick1.8.1.min.js", initSlick.startGallery, document.body);
 	        }
 	        else {
 	        	this.startGallery();	        
@@ -318,7 +318,7 @@ var initSlick = {
 				) 
 			{
 				if (typeof $.fn.slick == "undefined") {
-		        	loadJS("js/slick1.8.1.min.js", initSlick.start, document.body);
+		        	loadJS("js/slick1.8.1.min.js", initSlick.startCards, document.body);
 		        }
 		        else {
 		        	this.startCards();		        	

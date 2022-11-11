@@ -13,7 +13,7 @@ function eventDomLoaded() {
 }
 function eventWindowLoad() {
 	var partnersList,
-		headerMain = document.querySelector(".headerMain");
+		headerMain = document.querySelector(".headerMain"),
 		vpH = window.innerHeight;
 
 	if(partnersList = document.querySelector(".partners__list")) {
@@ -475,7 +475,7 @@ var bubbles = {
 				})
 			}
 
-			if(window.innerWidth >= 992) {				
+			/*if(window.innerWidth >= 992) {				
 				bubblesWrapper.addEventListener("mousemove", function(e) {				
 					gsap.to(bubblesWrapper.querySelectorAll(".bubbles__item"), 
 						{
@@ -486,7 +486,7 @@ var bubbles = {
 							overwrite:'auto'
 						});
 				});
-			}
+			}*/
 		}
 	},
 	click: function(bubble) {

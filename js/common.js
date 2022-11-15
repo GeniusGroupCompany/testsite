@@ -20,21 +20,14 @@ function eventWindowLoad() {
 	if(partnersList = document.querySelector(".partners__list")) {
 		var partnersListItems = partnersList.querySelectorAll(".partners__list__item");
 		partnersListItems.forEach((item) => {
-			item.addEventListener("mouseleave", () => {
-				item.classList.add("mleaved");
-				setTimeout(function() {
-					item.classList.remove("mleaved");
-				},700);
-			});
+			uLineAnimate(item);
 		});
 	}
 
 	if(document.querySelector(".uLineAnimate")) {
 		uLineAnimateLnks = document.querySelectorAll(".uLineAnimate");
 		uLineAnimateLnks.forEach((lnk) => {
-			lnk.addEventListener("mouseleave", () => {
-				uLineAnimate(lnk);
-			})
+			uLineAnimate(lnk);
 		});
 	}
 
@@ -166,10 +159,12 @@ var loadJS = function(url, callback, locToInsert){
     locToInsert.appendChild(scriptTag);
 };
 function uLineAnimate(item) {
-	item.classList.add("mleaved");
-	setTimeout(function() {
-		item.classList.remove("mleaved");
-	}, 700)
+	item.addEventListener("mouseleave", () => {		
+		item.classList.add("mleaved");
+		setTimeout(function() {
+			item.classList.remove("mleaved");
+		}, 700);
+	});
 }
 function imgTobg(img) {
     var _img,
@@ -316,6 +311,7 @@ var tabListFilter = {
 	}
 };
 var initSlick = {
+	direction: 0,
 	check: function() {
 		var isCardsSlick = document.getElementsByClassName("cards-slick")[0] ? 1 : 0;
 		var isGallerySlick = document.getElementsByClassName("gallery-slick")[0] ? 1 : 0;
@@ -344,20 +340,40 @@ var initSlick = {
 	},
 	startCards: function() {
 		var slickWrapper;
-		$(".cards-slick").on("init", function(event, slick) {
-			slickWrapper = slick.$list[0].closest(".cards-slickWrapper");
-			if(slickWrapper.classList.contains("cardBlog-slickWrapper")) {
-				initCardBlogSlickWrapper(slickWrapper.clientHeight);
-			}
-			else if(slickWrapper.classList.contains("cardCalendar-slickWrapper")) {
-				initCardCalendarSlickWrapper(slickWrapper.clientHeight);
-			}
+		var $cardsSlick = $(".cards-slick");
+		var sliderElAfterChange;
+					
+		$cardsSlick.on("init", function(event, slick) {
+			if(slick.$list && slick.$list.length) {				
+				slickWrapper = slick.$list[0].closest(".cards-slickWrapper");
+				if(slickWrapper.classList.contains("cardBlog-slickWrapper")) {
+					initCardBlogSlickWrapper(slickWrapper.clientHeight);
+					initSlick._setFakeSlickArrow(slick);
+				}
+				else if(slickWrapper.classList.contains("cardCalendar-slickWrapper")) {
+					initCardCalendarSlickWrapper(slickWrapper.clientHeight);
+					initSlick._setFakeSlickArrow(slick);
+				}
 
-			if(slickWrapper.classList.contains("cards-slickWrapperForAnimate")) {
-				slickWrapper.classList.add("cards-slickWrapper-firstLoad");
+				if(slickWrapper.classList.contains("cards-slickShiftLeftAnimate")) {
+					slickWrapper.classList.add("cards-slickWrapper-firstLoad");
+				}
 			}
 		});
-		$(".cards-slick").slick(initSlick.cardsSlickParams_1);
+		$cardsSlick.on('afterChange', function(event, _slick, currentSlide, nextSlide){
+			initSlick._setOptionsSlider(_slick, "afterChange", event);	
+		});
+		$cardsSlick.on('beforeChange', function(event, _slick, currentSlide, nextSlide){
+
+	    });
+		$cardsSlick.slick(initSlick.cardsSlickParams_1);
+
+		if(window.innerWidth >= 1200) {
+			$cardsSlick.slick('slickSetOption', 'accessibility', false);
+			$cardsSlick.slick('slickSetOption', 'draggable', false);
+			$cardsSlick.slick('slickSetOption', 'swipe', false);
+			$cardsSlick.slick('slickSetOption', 'touchMove', false);
+		}
 	},
 	startGallery: function() {
 		$(".gallery-slick").slick(initSlick.cardsSlickParams_2);
@@ -367,7 +383,7 @@ var initSlick = {
 	    infinite: false,
 	    speed: 500,
 	    slidesToShow: 2,
-	    slidesToScroll: 2,
+	    slidesToScroll: 1,
 	    slide: 'div',
 	    arrows: true,
 	    autoplay: false,
@@ -380,7 +396,8 @@ var initSlick = {
 	            breakpoint: 1279,
 	            settings: {
 	                slidesToShow: 3,
-	                slidesToScroll: 1
+	                slidesToScroll: 1,
+	                draggable: false
 	            }
 	        },
 	        {
@@ -449,7 +466,58 @@ var initSlick = {
 	            }
 	        }
 	    ]
-	}	
+	},
+	_setFakeSlickArrow: function(_slick) {
+		let fakeArrow = document.createElement("div");
+		fakeArrow.className = "slick-fakeArrow";
+		fakeArrow.innerHTML = "<div class='slick-fakeArrow-inner'></div>";
+		_slick.$slider[0].appendChild(fakeArrow);
+
+		_slick.$slider[0].querySelector(".slick-prev").onclick = function() {
+			initSlick.direction = -1;
+			// $(_slick.$slider[0]).slick('slickSetOption', 'slidesToScroll', 4);
+		};
+		_slick.$slider[0].querySelector(".slick-next").onclick = function() {initSlick.direction = 1};
+		_slick.$slider[0].querySelector(".slick-fakeArrow").onclick = function() {clickFakeArrow(this, event)};
+
+		function clickFakeArrow(sender, e) {
+			sender.parentNode.removeChild(sender);
+			initSlick._setOptionsSlider(_slick, "init", e);		
+		}
+
+	},
+	_setOptionsSlider: function(_slick, evt, e) {
+		let wW = window.innerWidth,
+			slideW = _slick.$slides[0].clientWidth,
+			slidesQ = _slick.slideCount,
+			slidesQonScreen = Math.floor(wW / slideW);
+
+		if(evt == "init") {
+			if(slidesQ - (_slick.currentSlide + slidesQonScreen) <= 1) {
+				$(_slick.$slider[0]).slick('slickSetOption', 'slidesToScroll', 0);
+				_slick.$slider[0].querySelector(".slick-next").click();
+			}
+			else if(slidesQ - (_slick.currentSlide + slidesQonScreen) < slidesQonScreen) {
+				$(_slick.$slider[0]).slick('slickSetOption', 'slidesToScroll', 1);
+				_slick.$slider[0].querySelector(".slick-next").click();
+			}
+			else {
+				_slick.$slider[0].querySelector(".slick-next").click();	
+			}
+		}
+		else if(evt == "afterChange") {
+
+			if(_slick.currentSlide + slidesQonScreen >= slidesQ) {
+				$(_slick.$slider[0]).slick('slickSetOption', 'slidesToScroll', 0);				
+				_slick.$slider[0].querySelector(".slick-next").classList.add("slick-disabled");
+				_slick.$slider[0].querySelector(".slick-next").setAttribute("area-disabled", "true");
+			}
+			if(slidesQ - (_slick.currentSlide + slidesQonScreen) <= slidesQonScreen) {
+				$(_slick.$slider[0]).slick('slickSetOption', 'slidesToScroll', 1);
+				$(_slick.$slider[0]).slick("slickNext");
+			}			
+		}
+	}
 };
 var bubbles = {
 	currAnimation1: undefined,
@@ -474,6 +542,9 @@ var bubbles = {
 
 			var floating;
 			function action() {
+				if(floating) {					
+					floating.kill();
+				}
 
 				var timeAction = gsap.utils.random(2, 5);
 
@@ -486,7 +557,7 @@ var bubbles = {
 					transformOrigin:'50% 50%',
 					duration: timeAction, 
 					ease:"none",
-					repeat:1, 
+					repeat:0, 
 					repeatRefresh: true
 				})
 			}
@@ -605,8 +676,11 @@ var bgs = {
 						if(!that.checkException(self.trigger.classList, that.excludeToReColor)) {
 							self.trigger.classList.add("active");
 						}
-
-						activeBgs = document.querySelectorAll(".bgs__bg.active");
+						
+						if(floating) {					
+							floating.kill();
+						}
+						activeBgs = document.querySelectorAll(".bgs__bg.imgToBg-done.active");
 						if(window.innerWidth >= 992) {
 							gsap.set(activeBgs,{filter:"hue-rotate(" + 1 +"deg) contrast(" + 1 + ")", backgroundSize:"100% 700px"});
 						}
@@ -616,7 +690,10 @@ var bgs = {
 						liveBg();
 					}
 					else {
-						self.trigger.classList.remove("active");
+						if(floating) {					
+							floating.kill();
+						}
+						self.trigger.classList.remove("active");						
 					}
 				}
 			});
@@ -626,19 +703,21 @@ var bgs = {
 			function liveBg() {
 
 				var timeAction = gsap.utils.random(3, 10);
-				var rndHue = gsap.utils.random(-30, 30, 1);
+				var rndHue = gsap.utils.random(-30, 24, 1);
 				var rndContrast = gsap.utils.random(0.5, 1.5, 0.1);
 				var rndBgSizeX = gsap.utils.random(65, 115, 1);
 
-				activeBgs = document.querySelectorAll(".bgs__bg.active");
+				activeBgs = document.querySelectorAll(".bgs__bg.imgToBg-done.active");
 
-				floating = gsap.timeline({onComplete:liveBg});
+				floating = gsap.timeline(
+					{onComplete: () => {liveBg()}}
+				);
 				floating.to(activeBgs, {
 					filter:"hue-rotate(" + rndHue +"deg) contrast(" + rndContrast + ")",					
 					duration: timeAction, 
 					ease:"none",
 					repeat:0, 
-					repeatRefresh: true
+					// repeatRefresh: true
 				})
 				.to(activeBgs, {
 					backgroundSize: (index, element) => {
@@ -650,7 +729,7 @@ var bgs = {
 							}
 						}
 					},
-					duration:7
+					duration:timeAction
 				})				
 			}
 		}

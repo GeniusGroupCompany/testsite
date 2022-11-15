@@ -1279,34 +1279,40 @@ a {
   margin-right: -15px;
 }
 
-.cards-slickWrapperForAnimate {
+.cards-slickShiftLeftAnimate {
   display: flex;
   justify-content: center;
   flex-direction: column;
   padding-left: 0;
   transition: padding-left 1s;
 }
-.cards-slickWrapperForAnimate .cards-slick {
+.cards-slickShiftLeftAnimate .cards-slick {
   transition: height 1s;
   overflow: hidden;
 }
-.cards-slickWrapperForAnimate .slick-arrow .slick-arrow-inner {
+.cards-slickShiftLeftAnimate .slick-arrow .slick-arrow-inner {
   opacity: 0;
   transform: scale(0.7);
   transition: opacity 0.5s linear, transform 0.4s cubic-bezier(0.17, 0.67, 0.48, 1.74);
 }
-.cards-slickWrapperForAnimate.waitToAnimate {
+.cards-slickShiftLeftAnimate.waitToAnimate {
   padding-left: 100vw;
 }
-.cards-slickWrapperForAnimate.waitToAnimate .cards-slick {
+.cards-slickShiftLeftAnimate.waitToAnimate .cards-slick {
   height: 0 !important;
 }
-.cards-slickWrapperForAnimate.animationDone .cards-slick {
+.cards-slickShiftLeftAnimate.animationDone .cards-slick {
   overflow: unset;
 }
-.cards-slickWrapperForAnimate.animationDone .slick-arrow .slick-arrow-inner {
+.cards-slickShiftLeftAnimate.animationDone .slick-arrow .slick-arrow-inner {
   opacity: 1;
   transform: scale(1);
+}
+.cards-slickShiftLeftAnimate .slick-fakeArrow {
+  cursor: pointer;
+}
+.cards-slickShiftLeftAnimate .slick-fakeArrow-inner {
+  opacity: 0;
 }
 
 .cards-slick .cardBlog {
@@ -1973,7 +1979,7 @@ a.cardCommon:hover [class$=__title] {
   background-repeat: no-repeat;
   background-position: center;
   filter: contrast(1);
-  transition: opacity 2s;
+  transition: opacity 2s, background-size 0.5s, filter 0.5s;
 }
 .bgs__bg::after {
   content: "";
@@ -2814,9 +2820,13 @@ body.textPreloader-active .textPreloader-container {
     height: auto;
   }
   .gallery-slickWrapper .gallery-slick .slick-arrow,
+.gallery-slickWrapper .gallery-slick .slick-fakeArrow,
 .gallery-slickWrapper .cards-slick .slick-arrow,
+.gallery-slickWrapper .cards-slick .slick-fakeArrow,
 .cards-slickWrapper .gallery-slick .slick-arrow,
-.cards-slickWrapper .cards-slick .slick-arrow {
+.cards-slickWrapper .gallery-slick .slick-fakeArrow,
+.cards-slickWrapper .cards-slick .slick-arrow,
+.cards-slickWrapper .cards-slick .slick-fakeArrow {
     position: absolute;
   }
   .gallery-slickWrapper .gallery-slick .cardCalendar,
@@ -2853,9 +2863,13 @@ body.textPreloader-active .textPreloader-container {
     flex: 1;
   }
   .gallery-slickWrapper .gallery-slick .slick-arrow,
+.gallery-slickWrapper .gallery-slick .slick-fakeArrow,
 .gallery-slickWrapper .cards-slick .slick-arrow,
+.gallery-slickWrapper .cards-slick .slick-fakeArrow,
 .cards-slickWrapper .gallery-slick .slick-arrow,
-.cards-slickWrapper .cards-slick .slick-arrow {
+.cards-slickWrapper .gallery-slick .slick-fakeArrow,
+.cards-slickWrapper .cards-slick .slick-arrow,
+.cards-slickWrapper .cards-slick .slick-fakeArrow {
     background-color: transparent;
     border: none;
     padding: 0;
@@ -2866,9 +2880,13 @@ body.textPreloader-active .textPreloader-container {
     right: 25px;
   }
   .gallery-slickWrapper .gallery-slick .slick-arrow-inner,
+.gallery-slickWrapper .gallery-slick .slick-fakeArrow-inner,
 .gallery-slickWrapper .cards-slick .slick-arrow-inner,
+.gallery-slickWrapper .cards-slick .slick-fakeArrow-inner,
 .cards-slickWrapper .gallery-slick .slick-arrow-inner,
-.cards-slickWrapper .cards-slick .slick-arrow-inner {
+.cards-slickWrapper .gallery-slick .slick-fakeArrow-inner,
+.cards-slickWrapper .cards-slick .slick-arrow-inner,
+.cards-slickWrapper .cards-slick .slick-fakeArrow-inner {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2882,16 +2900,24 @@ body.textPreloader-active .textPreloader-container {
     height: 35px;
   }
   .gallery-slickWrapper .gallery-slick .slick-arrow.pull-left,
+.gallery-slickWrapper .gallery-slick .slick-fakeArrow.pull-left,
 .gallery-slickWrapper .cards-slick .slick-arrow.pull-left,
+.gallery-slickWrapper .cards-slick .slick-fakeArrow.pull-left,
 .cards-slickWrapper .gallery-slick .slick-arrow.pull-left,
-.cards-slickWrapper .cards-slick .slick-arrow.pull-left {
+.cards-slickWrapper .gallery-slick .slick-fakeArrow.pull-left,
+.cards-slickWrapper .cards-slick .slick-arrow.pull-left,
+.cards-slickWrapper .cards-slick .slick-fakeArrow.pull-left {
     right: 80px;
     transform: scale(-1, 1);
   }
   .gallery-slickWrapper .gallery-slick .slick-arrow.slick-disabled,
+.gallery-slickWrapper .gallery-slick .slick-fakeArrow.slick-disabled,
 .gallery-slickWrapper .cards-slick .slick-arrow.slick-disabled,
+.gallery-slickWrapper .cards-slick .slick-fakeArrow.slick-disabled,
 .cards-slickWrapper .gallery-slick .slick-arrow.slick-disabled,
-.cards-slickWrapper .cards-slick .slick-arrow.slick-disabled {
+.cards-slickWrapper .gallery-slick .slick-fakeArrow.slick-disabled,
+.cards-slickWrapper .cards-slick .slick-arrow.slick-disabled,
+.cards-slickWrapper .cards-slick .slick-fakeArrow.slick-disabled {
     opacity: 0.3;
     pointer-events: none;
   }
@@ -3303,15 +3329,23 @@ body.textPreloader-active .textPreloader-container {
     margin-top: 60px;
   }
   .gallery-slickWrapper .gallery-slick .slick-arrow,
+.gallery-slickWrapper .gallery-slick .slick-fakeArrow,
 .gallery-slickWrapper .cards-slick .slick-arrow,
+.gallery-slickWrapper .cards-slick .slick-fakeArrow,
 .cards-slickWrapper .gallery-slick .slick-arrow,
-.cards-slickWrapper .cards-slick .slick-arrow {
+.cards-slickWrapper .gallery-slick .slick-fakeArrow,
+.cards-slickWrapper .cards-slick .slick-arrow,
+.cards-slickWrapper .cards-slick .slick-fakeArrow {
     top: -80px;
   }
   .gallery-slickWrapper .gallery-slick .slick-arrow-inner,
+.gallery-slickWrapper .gallery-slick .slick-fakeArrow-inner,
 .gallery-slickWrapper .cards-slick .slick-arrow-inner,
+.gallery-slickWrapper .cards-slick .slick-fakeArrow-inner,
 .cards-slickWrapper .gallery-slick .slick-arrow-inner,
-.cards-slickWrapper .cards-slick .slick-arrow-inner {
+.cards-slickWrapper .gallery-slick .slick-fakeArrow-inner,
+.cards-slickWrapper .cards-slick .slick-arrow-inner,
+.cards-slickWrapper .cards-slick .slick-fakeArrow-inner {
     background-size: 10px;
     width: 40px;
     height: 40px;
